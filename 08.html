@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>schedule源码</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1" />
+    <style>
+        #animation {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100px;
+            height: 100px;
+            background: red;
+            animation: myfirst 5s;
+            animation-iteration-count: infinite;
+        }
+
+        @keyframes myfirst {
+            from {
+                width: 30px;
+                height: 30px;
+                border-radius: 0;
+                background: red;
+            }
+
+            to {
+                width: 300px;
+                height: 300px;
+                border-radius: 50%;
+                background: yellow;
+            }
+        }
+    </style>
+    <script src="./08.js"></script>
+</head>
+
+<body>
+    <button id="btn">perform</button>
+    <div id="animation">Animation</div>
+    <script>
+        const btn = document.getElementById("btn");
+        const animate = document.getElementById("animation");
+        let startTime;
+        // btn.onclick = () => {
+        //     startTime = new Date().getTime();
+        //     for (let i = 0; i < 3000; i++) {
+        //         if (i === 2999) {
+        //             scheduleCallback(() => {
+        //                 const start = new Date().getTime();
+        //                 while (new Date().getTime() - start < 2) { }
+        //                 const endTime = new Date().getTime();
+        //                 animate.innerHTML = endTime - startTime;
+        //             });
+        //         } else {
+        //             scheduleCallback(() => {
+        //                 const start = new Date().getTime();
+        //                 while (new Date().getTime() - start < 2) { }
+        //             });
+        //         }
+        //     }
+        // };
+        const A = () => {
+            console.log('A')
+            const start = Date.now();
+            while (Date.now() - start < 2) { }
+        }
+        const B = () => {
+            console.log('B')
+            const start = Date.now();
+            while (Date.now() - start < 3) { }
+        }
+        const C = () => {
+            console.log('C')
+            const start = Date.now();
+            while (Date.now() - start < 4) { }
+        }
+        const D = () => {
+            console.log('D')
+            const start = Date.now();
+            while (Date.now() - start < 2) { }
+        }
+        btn.onclick = () => {
+
+            scheduleCallback(A)
+            scheduleCallback(B)
+            scheduleCallback(C)
+            scheduleCallback(D)
+        };
+    </script>
+</body>
+
+</html>

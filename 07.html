@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>schedule源码</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1" />
+    <style>
+        #animation {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100px;
+            height: 100px;
+            background: red;
+            animation: myfirst 5s;
+            animation-iteration-count: infinite;
+        }
+
+        @keyframes myfirst {
+            from {
+                width: 30px;
+                height: 30px;
+                border-radius: 0;
+                background: red;
+            }
+
+            to {
+                width: 300px;
+                height: 300px;
+                border-radius: 50%;
+                background: yellow;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <button id="btn">每次调度都调用console.log打印，观察Message Channel调度次数</button>
+    <button id="btn2">理想情况下，观察Message Channel调度次数</button>
+    <button id="btn3">观察Message Channel在100毫秒内的Performance</button>
+    <div id="animation">Animation</div>
+    <script>
+        // 测试1秒内调度次数
+        btn.onclick = () => {
+            const startTime = new Date().getTime();
+            let i = 0;
+            var channel = new MessageChannel();
+            var port = channel.port2;
+            channel.port1.onmessage = work;
+            function work() {
+                if (Date.now() - startTime < 1000) {
+                    i++
+                    console.log(i)
+                    port.postMessage(null);
+                } else {
+                    console.log('在使用console.log打印的情况下，MessageChannel调度次数', i, Date.now() - startTime)
+                }
+            }
+            port.postMessage(null);
+        };
+
+        // 注释掉console.log(i)
+        btn2.onclick = () => {
+            const startTime = new Date().getTime();
+            let i = 0;
+            var channel = new MessageChannel();
+            var port = channel.port2;
+            channel.port1.onmessage = work;
+            function work() {
+                if (Date.now() - startTime < 1000) {
+                    i++
+                    // console.log(i)
+                    port.postMessage(null);
+                } else {
+                    console.log('理想情况下，MessageChannel调度次数', i, Date.now() - startTime)
+                }
+            }
+            port.postMessage(null);
+        };
+
+
+        // 观察100毫秒内的performance
+        btn3.onclick = () => {
+            const startTime = new Date().getTime();
+            let i = 0;
+            var channel = new MessageChannel();
+            var port = channel.port2;
+            channel.port1.onmessage = work;
+            function work() {
+                if (Date.now() - startTime < 100) {
+                    i++
+                    port.postMessage(null);
+                } else {
+                    console.log('100毫秒内MessageChannel调度Performance', i, Date.now() - startTime)
+                }
+            }
+            port.postMessage(null);
+        };
+    </script>
+</body>
+
+</html>

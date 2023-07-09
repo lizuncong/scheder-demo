@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>schedule源码</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1" />
+    <style>
+        #animation {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100px;
+            height: 100px;
+            background: red;
+            animation: myfirst 5s;
+            animation-iteration-count: infinite;
+        }
+
+        @keyframes myfirst {
+            from {
+                width: 30px;
+                height: 30px;
+                border-radius: 0;
+                background: red;
+            }
+
+            to {
+                width: 300px;
+                height: 300px;
+                border-radius: 50%;
+                background: yellow;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <button id="btn">perform work</button>
+    <div id="animation">Animation</div>
+    <script>
+        const btn = document.getElementById("btn");
+        const animate = document.getElementById("animation");
+        let works = [];
+        for (let i = 0; i < 3000; i++) {
+            works.push(() => {
+                const start = new Date().getTime();
+                while (new Date().getTime() - start < 2) { }
+            });
+        }
+
+        btn.onclick = () => {
+            startTime = new Date().getTime();
+            flushWork();
+        };
+
+        function flushWork() {
+            setTimeout(workLoop, 0);
+        }
+
+        function workLoop() {
+            const work = works.shift();
+            if (work) {
+                work();
+                setTimeout(workLoop, 0);
+            } else {
+                const endTime = new Date().getTime();
+                animate.innerHTML = endTime - startTime;
+            }
+        }
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>schedule源码</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1" />
+    <style>
+        #animation {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100px;
+            height: 100px;
+            background: red;
+            animation: myfirst 5s;
+            animation-iteration-count: infinite;
+        }
+
+        @keyframes myfirst {
+            from {
+                width: 30px;
+                height: 30px;
+                border-radius: 0;
+                background: red;
+            }
+
+            to {
+                width: 300px;
+                height: 300px;
+                border-radius: 50%;
+                background: yellow;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <button id="btn">perform work</button>
+    <div id="animation">Animation</div>
+    <script>
+        let works = [];
+        for (let i = 0; i < 3000; i++) {
+            works.push(() => {
+                const start = new Date().getTime();
+                while (new Date().getTime() - start < 2) { }
+            });
+        }
+
+        // 随机生成耗时在0-1毫秒之间的任务
+        // for (let i = 0; i < 3000; i++) {
+        //     works.push(() => {
+        //         const start = performance.now();
+        //         const time = Math.random();
+        //         while (performance.now() - start < time) { }
+        //     });
+        // }
+        const btn = document.getElementById("btn");
+        const animate = document.getElementById("animation");
+
+        var channel = new MessageChannel();
+        var port = channel.port2;
+        channel.port1.onmessage = workLoop;
+
+        let endTime;
+        let startTime;
+        btn.onclick = () => {
+            startTime = new Date().getTime();
+            port.postMessage(null);
+        };
+        const yieldInterval = 5; // 单位毫秒
+        function workLoop() {
+            const currentEventStartTime = new Date().getTime();
+            let work = works.shift();
+            while (work) {
+                work();
+                // 执行完当前工作，则判断时间是否超过5ms，如果超过，则退出while循环
+                if (new Date().getTime() - currentEventStartTime > yieldInterval) {
+                    // 执行耗时超过了5ms，结束本轮事件，主动让出控制权给浏览器绘制页面或者执行其他操作
+                    break;
+                }
+                work = works.shift();
+            }
+            // 如果还有剩余的工作，则放到下一个事件中处理
+            if (works.length) {
+                port.postMessage(null);
+            } else {
+                const endTime = new Date().getTime();
+                animate.innerHTML = endTime - startTime;
+            }
+        }
+
+    </script>
+</body>
+
+</html>
