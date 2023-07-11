@@ -41,19 +41,21 @@
     <script>
         let works = [];
         for (let i = 0; i < 3000; i++) {
-            works.push(() => {
+            const task = () => {
                 const start = new Date().getTime();
                 while (new Date().getTime() - start < 2) { }
-            });
+            }
+            works.push(task);
         }
 
         // 随机生成耗时在0-1毫秒之间的任务
         // for (let i = 0; i < 3000; i++) {
-        //     works.push(() => {
+        //     const randomTask = () => {
         //         const start = performance.now();
         //         const time = Math.random();
         //         while (performance.now() - start < time) { }
-        //     });
+        //     }
+        //     works.push(randomTask);
         // }
         const btn = document.getElementById("btn");
         const animate = document.getElementById("animation");

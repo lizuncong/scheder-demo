@@ -43,10 +43,11 @@
         const animate = document.getElementById("animation");
         let works = [];
         for (let i = 0; i < 3000; i++) {
-            works.push(() => {
+            const task = () => {
                 const start = new Date().getTime();
                 while (new Date().getTime() - start < 2) { }
-            });
+            }
+            works.push(task);
         }
 
         btn.onclick = () => {
